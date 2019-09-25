@@ -1,0 +1,102 @@
+{layout name="../../../application/blog/view/layout" /}
+<style>
+    .pagination{padding:0;}
+    .content>.messageList{
+    width: 600px;
+    background: white;
+    float: left;
+}
+.messageList>.info{
+    padding: 10px 20px;
+    border-bottom: 2px solid #ccc;
+}
+.info>.infoText{
+    line-height: 25px;
+    margin-bottom: 10px;
+}
+.info>.infoOperation{
+    width: 100%;
+    overflow: hidden;
+}
+.infoOperation>.infoTime{
+    float: left;
+    font-size: 13px;
+    color: #ccc;
+}
+.infoOperation>.infoHandle{
+    float: right;
+    font-size: 13px;
+}
+.infoHandle>a{
+    text-decoration: none;
+    color: #ccc;
+    background: url("../images/icons.png") no-repeat 0 0;
+    padding-left: 25px;
+    margin-left: 10px;
+}
+.infoHandle>a:nth-child(2){
+    background-position: 0 -17px;
+}
+.infoHandle>a:nth-child(3){
+    background-position: 0 -33px;
+}
+</style>
+<header class="article-header" style="padding-top:0px;padding-bottom: 15px;">
+    <h1 class="article-title">查看留言</h1>
+</header>
+<div class="table-responsive">
+    <!--<a href="{:url('blog/Blogcate/add')}" class="btn btn-danger">添加分类</a>-->
+    <table class="table table-bordered table-hover">
+        <tr>
+            <td class="">ID</td>
+            <td class="">姓名</td>
+            <td class="">手机号</td>
+            <td class="">留言时间</td>
+            <td class="">操作</td>
+        </tr>
+        {volist name="list" id="vo"}
+
+        <tr>
+            <td class="">{$vo.id}</td>
+            <td class="">{$vo.name}</td>
+            <td class="">{$vo.phone}</td>
+            <td class="">{$vo.create_time}</td>
+            <td class=""><a href="javascript:;" data="{$vo.id}" class="btn btn-info btn-xs del"><i class="glyphicon glyphicon-trash"></i> 删除</a></td>
+        </tr>
+        {/volist}
+    </table>
+    <nav aria-label="...">
+        {$list->render()}
+    </nav>
+</div>
+<script>
+
+    //分类删除
+    $(".del").on('click',function(){
+        //this和$(this)的区别
+        //获取栏目ID
+        var id=$(this).attr("data");
+        //询问框
+        layer.confirm('确定要删除吗？', {
+            btn: ['删除','取消'] //按钮
+        }, function(){
+            $.ajax({
+                type:"post",
+                url:"{:addon_url('message://Index/del')}",
+                data:{id:id},
+                dataType:"json",
+                success:function(res){
+                    if(res.code==1){
+                        layer.msg(res.msg,function(){
+                            location.reload();
+                        });
+                    }else{
+                        layer.msg(res.msg);
+                    }
+                }
+            })
+        }, function(){
+        });
+    })
+
+</script>

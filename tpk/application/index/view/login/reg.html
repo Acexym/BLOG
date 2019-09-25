@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>易风博客系统</title>
+		<link rel="stylesheet" type="text/css" href="__INDEX__/css/bootstrap.min.css">
+		<style>
+			body{background-color:#31B2F3;}
+			.body-center{background: #FFF;width: 450px;
+			height: 500px;
+			margin:60px auto;
+			border-radius: 6px;
+			box-shadow:0px 0px 10px #DDD;
+			padding:15px;
+			}
+			.body-center h3,.body-center h4{margin:0;padding:0;text-align: center;}
+			.body-center h3{line-height: 2.5;padding-top: 25px;color:#777}
+			.body-center h4{font-size:.9em;color:#AAA;}
+			form{margin:20px 25px;}
+		</style>
+	</head>
+	<body>
+		<div class="body-center">
+			<h3>多弗朗明哥博客-用户注册</h3>
+			<h4>请大家多多关照</h4>
+			<form action="" method="post" id="regform">
+				<div class="form-group">
+				    <input type="text" name="account" class="form-control" id="account" placeholder="账号">
+				</div>
+				<div class="form-group">
+				    <input type="password" name="passwd" class="form-control" id="passwd" placeholder="密码">
+				</div>
+				<div class="form-group">
+				    <input type="password" name="repasswd" class="form-control" id="repasswd" placeholder="确认密码">
+				</div>
+				<div class="form-group">
+				    <input type="email" name="email" class="form-control" id="email" placeholder="邮箱">
+				</div>
+				<div class="form-group form-inline">
+				    <input type="text" class="form-control" name="code" id="code" placeholder="验证码" style="width: 90px;">
+					<img src="{:captcha_src()}" alt="captcha" style="height: 35px;cursor:pointer;" onclick="this.src='{:captcha_src()}'"/>
+				</div>
+				<input type="button" id="btnreg" value="立即注册" class="btn btn-success btn-lg btn-block"/>
+				<a href="{:url('index/login/index')}" class="btn btn-danger btn-lg btn-block">登录</a>
+			</form>
+		</div>
+		<script src="__COMMON__/js/jquery.min.js"></script>
+		<script src="__COMMON__/layer/layer.js"></script>
+		<script>
+			$('#btnreg').on('click',function () {
+			
+			    var form_data=$('#regform').serialize();
+			   
+				$.ajax({
+					type:'POST',
+					url:"{:url('index/login/reg')}",
+					data:form_data,
+					success:function (res) {
+						console.log(res);
+						if(res.code == "1"){
+                            layer.msg(res.msg,{time:1000},function () {
+								location.href="{:url('index/login/index')}";
+                            });
+						}else{
+						    layer.msg(res.msg);
+						}
+                    }
+				});
+//				$.post(
+//              "{:url('index/login/register')}",
+//              form_data,
+//              function(data){
+//              console.log(data);
+//              }
+//      )
+            });
+		</script>
+	</body>
+</html>

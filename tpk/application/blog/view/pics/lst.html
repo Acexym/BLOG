@@ -1,0 +1,133 @@
+{layout name="layout" /}
+<style>
+    .pagination{padding:0;}
+</style>
+<header class="article-header" style="padding-top:0px;padding-bottom: 15px;">
+    <h1 class="article-title">图片列表</h1>
+</header>
+<div class="table-responsive">
+    <a href="{:url('blog/Pics/add')}" class="btn btn-danger">添加图片</a>
+    <!--Layui数据表格-->
+    <table id="mydata" lay-filter="mydata"></table>
+</div>
+<script type="text/html" id="cidTpl">
+    <span class="layui-badge">{{d.cid}}</span>
+</script>
+<!--工具条-->
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+    layui.use(['table'],function(){
+        var table = layui.table;
+        //转换静态表格
+        // table.init('mytable', {
+        //     height: 315 //设置高度
+        // });
+        // 方法渲染
+        table.render({
+            elem: '#mydata'
+            ,height: 500
+            ,url: '{:url("blog/pics/getdata")}' //数据接口
+            ,page: true //开启分页
+            ,limit:3
+            ,limits:[5,10,15,20,30,50]
+            ,cols: [[ //表头
+                    {field:'aid',title:"ID",width:100,sort:true}
+                  
+                    ,{field:'cid',title:"相册",width:200,templet: '#cidTpl'}
+
+                    ,{field:'addtime',title:"时间",width:200,sort:true}
+                    ,{field:'cz',title:"操作",toolbar: '#barDemo'}
+                ]]
+                ,response: {
+                statusName: 'status' //数据状态的字段名称，默认：code
+                ,statusCode: 200 //成功的状态码，默认：0
+                ,msgName: 'hint' //状态信息的字段名称，默认：msg
+                ,countName: 'total' //数据总数的字段名称，默认：count
+                ,dataName: 'rows' //数据列表的字段名称，默认：data
+        }
+        });
+        //内容编辑
+        table.on('edit(mydata)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+            // alert(obj.value);
+            // console.log(obj.value); //得到修改后的值
+            // console.log(obj.field); //当前编辑的字段名
+            // console.log(obj.data); //所在行的所有相关数据
+            $.ajax({
+                type:"post",
+                url:"{:url('blog/Pics/savedata')}",
+                data:{aid:obj.data.aid,f:obj.field,d:obj.value},
+                dataType:"json",
+                success:function(res){
+                    if(res.code==1){
+                        layer.msg(res.msg);
+                    }else{
+                        layer.msg(res.msg);
+                    }
+                }
+            });
+        });
+    //    事件监听
+        table.on('tool(mydata)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+            if(layEvent === 'edit'){ //查看
+                location.href="{:url('blog/Pics/edit')}?aid="+data.aid;
+                //do somehing
+            } else if(layEvent === 'del'){ //删除
+                layer.confirm('真的删除行么', function(index){
+                    $.ajax({
+                        type:"post",
+                        url:"{:url('blog/Pics/del')}",
+                        data:{id:data.aid},
+                        dataType:"json",
+                        success:function(res){
+                            if(res.code==1){
+                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                                layer.close(index);
+                                // layer.msg(res.msg,function(){
+                                //     location.reload();
+                                // });
+                            }else{
+                                layer.msg(res.msg);
+                            }
+                        }
+                    });
+
+                    //向服务端发送删除指令
+                });
+            }
+        });
+    });
+    //分类删除
+    // $(".del").on('click',function(){
+    //     //this和$(this)的区别
+    //     //获取栏目ID
+    //     var aid=$(this).attr("data");
+    //     //询问框
+    //     layer.confirm('确定要删除吗？', {
+    //         btn: ['删除','取消'] //按钮
+    //     }, function(){
+    //         $.ajax({
+    //             type:"post",
+    //             url:"{:url('blog/Pics/del')}",
+    //             data:{id:aid},
+    //             dataType:"json",
+    //             success:function(res){
+    //                 if(res.code==1){
+    //                     layer.msg(res.msg,function(){
+    //                         location.reload();
+    //                     });
+    //                 }else{
+    //                     layer.msg(res.msg);
+    //                 }
+    //             }
+    //         })
+    //     }, function(){
+    //     });
+    // })
+</script>

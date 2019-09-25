@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>博客系统</title>
+		<link rel="stylesheet" type="text/css" href="__INDEX__/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="__INDEX__/iconfont/iconfont.css"/>
+		<style>
+			body{background-color:#31B2F3;}
+			.body-center{background: #FFF;width: 450px;
+			height: 500px;
+			margin:60px auto;
+			border-radius: 6px;
+			box-shadow:0px 0px 10px #DDD;
+			padding:15px;
+			}
+			.body-center h3,.body-center h4{margin:0;padding:0;text-align: center;}
+			.body-center h3{line-height: 2.5;padding-top: 25px;color:#777}
+			.body-center h4{font-size:.9em;color:#AAA;}
+			form{margin:35px 25px 10px 25px;}
+			.iconfont{font-size:65px;}
+			.sanfang{text-align: center;}
+			.sanfang a{text-decoration: none;padding:0px 25px;}
+			.sanfang a:hover{text-decoration: none;}
+			.sanfang a:first-child{color:#31B2F3;}
+			.sanfang a:last-child{color:#C9302C;}
+		</style>
+	</head>
+	<body>
+		<div class="body-center">
+			<h3>多弗朗系统-登录</h3>
+			<h4>个人博客！</h4>
+			<form action="" method="post" id="myform">
+				<div class="form-group">
+				    <label for="account">用户名</label>
+				    <input type="account" name="account" class="form-control" id="account" placeholder="账号">
+				</div>
+				<div class="form-group">
+				    <label for="passwd">密码</label>
+				    <input type="password" name="passwd" class="form-control" id="passwd" placeholder="密码">
+				</div>
+				<input type="button" value="登录" id="mybtn" class="btn btn-success btn-lg btn-block"/>
+				<a href="{:url('/index/Login/reg')}" class="btn btn-danger btn-lg btn-block">立即注册</a>
+			</form>
+			<div style="padding:5px 25px;" class="sanfang">
+				<a href="{:url('index/Index/qqlogin')}" class="iconfont">&#xe6a0;</a>
+				<a href="" class="iconfont">&#xe6b1;</a>
+				<a href="" class="iconfont">&#xe6b2;</a>
+			</div>
+		</div>
+		<script src="__COMMON__/js/jquery.min.js"></script>
+		<script src="__COMMON__/layer/layer.js"></script>
+		<script>
+            $('#mybtn').on('click',function () {
+                var form_data=$('#myform').serialize();
+                $.ajax({
+                    type:'post',
+                    url:"{:url('index/Login/index')}",
+                    data:form_data,
+                    success:function (res) {
+                        if(res.code == "1"){
+                            layer.msg(res.msg,{time:1000},function () {
+                                location.href="{:url('blog/Index/index')}";
+                            });
+                        }else{
+                            layer.msg(res.msg,{time:1000},function () {
+                             if($('#code').length == 0){
+                              if(res.code==2){
+                              	count++;
+                                    }
+                                    if(res.code==3){
+                                        count=res.count;
+                                    }
+                                    addcode();
+                              }
+                             $('#codeimg').attr('src',"{:captcha_src()}?"+Math.random());
+                            });
+                        }
+                    }
+                });
+            });
+        var count;
+      count={$logincount};
+            console.log(count);
+          addcode();
+			function addcode(){
+                if(count > 3){
+                    var str;
+                    str = '<div class="form-group form-inline">';
+                    str = str+ '<input type="text" name="code" class="form-control" id="code" placeholder="验证码" style="width: 90px;">';
+                    str = str+ '<img src="{:captcha_src()}" id="codeimg" alt="captcha" style="height: 35px;cursor:pointer;" onclick="this.src=\'{:captcha_src()}?\'+Math.random();"/>';
+                    str = str+ '</div>';
+                    $('.body-center').innerHeight(560);
+                    $('#mybtn').before(str);
+                }
+			}
+   
+			
+		</script>
+	</body>
+</html>

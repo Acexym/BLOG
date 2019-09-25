@@ -1,0 +1,62 @@
+{layout name="layout" /}
+<style>
+    .pagination{padding:0;}
+</style>
+<header class="article-header" style="padding-top:0px;padding-bottom: 15px;">
+    <h1 class="article-title">视频分类列表</h1>
+</header>
+<div class="table-responsive">
+    <a href="{:url('blog/videocate/add')}" class="btn btn-danger">添加分类</a>
+    <table class="table table-bordered table-hover">
+        <tr>
+            <td class="">ID</td>
+            <td class="">分类名称</td>
+        
+            <td class="">操作</td>
+        </tr>
+        {volist name="list" id="vo"}
+
+        <tr>
+            <td class="">{$vo.cid}</td>
+            <td class="">{$vo.name}</td>          
+            <td class=""><a href="{:url('blog/Blogcate/edit',['cid'=>$vo.cid])}" class="btn btn-danger btn-xs btn-edit"><i class="glyphicon glyphicon-edit"></i> 编辑</a> <a href="javascript::" data="{$vo.cid}" class="btn btn-info btn-xs del"><i class="glyphicon glyphicon-trash"></i> 删除</a></td>
+        </tr>
+        {/volist}
+    </table>
+    <nav aria-label="...">
+        {$list->render()}
+    </nav>
+</div>
+<script>
+ 
+    //分类删除
+    $(".del").on('click',function(){
+        //this和$(this)的区别
+        //获取栏目ID
+        var cid=$(this).attr("data");
+
+        //询问框
+        layer.confirm('确定要删除吗？', {
+            btn: ['删除','取消'] //按钮
+        }, function(){
+            $.ajax({
+                type:"post",
+                url:"{:url('blog/Blogcate/del')}",
+                data:{id:cid},
+                dataType:"json",
+                success:function(res){
+                    if(res.code==1){
+                        layer.msg(res.msg,function(){
+                            location.reload();
+                        });
+                    }else{
+                        layer.msg(res.msg);
+                    }
+                }
+            })
+        }, function(){
+        });
+    })
+ 
+  
+</script>

@@ -1,0 +1,107 @@
+{layout name="layout" /}
+<header class="article-header" style="padding-top:0px;padding-bottom: 15px;">
+    <h1 class="article-title">添加图片</h1>
+</header>
+<div class="readers">
+    <form class="form-horizontal" method="post" action="" onsubmit="return checkform();">
+        <input type="hidden" name="aid" value="{$pics.aid}">
+        <div class="form-group">
+            <label for="cid" class="col-sm-2 control-label">相册</label>
+            <div class="col-sm-10">
+                <select class="form-control" name="cid" id="cid">
+                    {volist name="catelist" id="vo"}
+                    <option value="{$vo.cid}" {eq name="vo.cid" value="$pics.cid"}selected="selected"{/eq}>{$vo.name}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="pic" class="col-sm-2 control-label">栏目图片</label>
+            <div class="col-sm-10">
+                <button type="button" class="layui-btn" id="myupload">
+                    <i class="layui-icon">&#xe67c;</i>上传图片
+                </button>
+                <input type="text" name="pic" value="{$pics.pic}" class="form-control myinput" id="pic" placeholder="栏目图片">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="content" class="col-sm-2 control-label">我的心情</label>
+            <div class="col-sm-10">
+                <!--<textarea name="content" id="content" class="form-control" rows="8">{$pics.content}</textarea>-->
+                <script id="container" name="content" type="text/plain">{$pics.content}</script>
+            </div>
+        </div>
+       
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">保存</button>
+            </div>
+        </div>
+        <div id="msg" style="color:red;"></div>
+    </form>
+</div>
+<!-- 配置文件 -->
+<script type="text/javascript" src="__COMMON__/ueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="__COMMON__/ueditor/ueditor.all.js"></script>
+<script>
+    //实例化编辑器
+    var ue = UE.getEditor('container',{
+        autoHeightEnabled: true,
+        //常用配置项
+        initialFrameWidth:null,//自适应宽度
+    });
+    //表单的前端验证
+    function checkform() {
+        var input=document.getElementsByClassName('myinput');
+        var name=input[0].value.trim();
+        if(title=="" || title ==null || title=="undefined"){
+            var msg=document.getElementById("msg");
+            msg.innerHTML="* 标题不能为空！";
+            return false;
+        }else{
+            return true;
+        }
+
+    }
+    //图片上传
+    // layui.use('upload', function(){
+    //     var upload = layui.upload;
+    //     //执行实例
+    //     var uploadInst = upload.render({
+    //         elem: '#myupload' //绑定元素
+    //         ,url: '{:url("blog/Blogcate/upimg")}' //上传接口
+    //         ,field:'upimg'
+    //         ,done: function(res){
+    //             //上传完毕回调
+    //             layer.msg(res.msg,{time:2000},function () {
+    //                 if(res.code==1){
+    //                     $("#pic").val("uploads\\"+res.src);
+    //                 }
+    //             })
+    //         }
+    //         ,error: function(){
+    //             //请求异常回调
+    //         }
+    //     });
+    // });
+    //自动upload组件
+    var upload = layui.upload;
+    //执行实例
+    var uploadInst = upload.render({
+        elem: '#myupload' //绑定元素
+        ,url: '{:url("blog/Pics/upimg")}' //上传接口
+        ,field:'upimg'
+        ,done: function(res){
+            //上传完毕回调
+            layer.msg(res.msg,{time:2000},function () {
+                if(res.code==1){
+                    $("#pic").val("uploads\\"+res.src);
+                }
+            })
+        }
+        ,error: function(){
+            //请求异常回调
+        }
+    });
+</script>

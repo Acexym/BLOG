@@ -1,0 +1,123 @@
+{layout name="layout" /}
+<header class="article-header" style="padding-top:0px;padding-bottom: 15px;">
+    <h1 class="article-title">修改相册</h1>
+</header>
+<div class="readers">
+    <form class="form-horizontal" id="myform" method="post" action="" onsubmit="return checkform();">
+        <input type="hidden" name="cid" value="{$cate.cid}">
+        <div class="form-group">
+            <label for="name" class="col-sm-2 control-label">相册名称</label>
+            <div class="col-sm-10">
+                <input type="text" name="name" value="{$cate.name}" class="form-control myinput" id="name" placeholder="相册名称">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="sort" class="col-sm-2 control-label">排序</label>
+            <div class="col-sm-10">
+                <input type="text" name="sort" value="{$cate.sort}" class="form-control myinput" id="sort" placeholder="排序">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="pic" class="col-sm-2 control-label">相册封面</label>
+            <div class="col-sm-10">
+                <button type="button" class="layui-btn" id="myupload">
+                    <i class="layui-icon">&#xe67c;</i>上传图片
+                </button>
+                <input type="text" name="pic" value="{$cate.pic}" class="form-control myinput" id="pic" placeholder="相册封面">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="pic" class="col-sm-2 control-label">是否显示</label>
+            <div class="col-sm-10">
+                <label class="checkbox-inline">
+                    <!--eq 中的name变量不能加`$`-->
+                    <!--<input type="checkbox" id="isshow" name="isshow" value="1" {eq name="cate.isshow" value="1"}checked="checked"{/eq}> 显示-->
+                <!--</label>-->
+                    <input type="checkbox" id="isshow" name="isshow" value="1" {$cate.isshow?'checked="checked"':''}> 显示
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">保存</button>
+            </div>
+        </div>
+        <div id="msg" style="color:red;"></div>
+    </form>
+</div>
+<script>
+    //表单的前端验证
+    function checkform() {
+        var input=document.getElementsByClassName('myinput');
+        var name=input[0].value.trim();
+        if(name=="" || name ==null || name=="undefined"){
+            var msg=document.getElementById("msg");
+            msg.innerHTML="* 相册名称不能为空！";
+            return false;
+        }else{
+            //取表单数据
+            var data=$("#myform").serialize();
+            $.ajax({
+                type:"post",
+                url:"{:url('blog/Picscate/edit')}",
+                data:data,
+                dataType:"json",
+                success:function(res){
+                   if(res.code==1){
+                       //更新成功
+                       layer.msg(res.msg,{time:1000},function () {
+                           var index = parent.layer.getFrameIndex(window.name);
+                           parent.layer.close(index);
+                           //刷新列表
+                           parent.location.reload();
+                       });
+                   }
+                }
+            });
+            //阻止表单提交
+            return false;
+        }
+
+    }
+    //图片上传
+    // layui.use('upload', function(){
+    //     var upload = layui.upload;
+    //     //执行实例
+    //     var uploadInst = upload.render({
+    //         elem: '#myupload' //绑定元素
+    //         ,url: '{:url("blog/Picscate/upimg")}' //上传接口
+    //         ,field:'upimg'
+    //         ,done: function(res){
+    //             //上传完毕回调
+    //             layer.msg(res.msg,{time:2000},function () {
+    //                 if(res.code==1){
+    //                     $("#pic").val("uploads\\"+res.src);
+    //                 }
+    //             })
+    //         }
+    //         ,error: function(){
+    //             //请求异常回调
+    //         }
+    //     });
+    // });
+    //自动upload组件
+    var upload = layui.upload;
+    //执行实例
+    var uploadInst = upload.render({
+        elem: '#myupload' //绑定元素
+        ,url: '{:url("blog/Picscate/upimg")}' //上传接口
+        ,field:'upimg'
+        ,done: function(res){
+            //上传完毕回调
+            layer.msg(res.msg,{time:2000},function () {
+                if(res.code==1){
+                    $("#pic").val("uploads\\"+res.src);
+                }
+            })
+        }
+        ,error: function(){
+            //请求异常回调
+        }
+    });
+</script>

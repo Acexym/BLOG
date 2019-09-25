@@ -1,0 +1,61 @@
+{layout name="layout" /}
+<style>
+    .pagination{padding:0;}
+</style>
+<header class="article-header" style="padding-top:0px;padding-bottom: 15px;">
+    <h1 class="article-title">图片列表</h1>
+</header>
+<div class="table-responsive">
+    <a href="{:url('blog/Pics/add')}" class="btn btn-danger">添加图片</a>
+    <table class="table table-bordered table-hover">
+        <tr>
+            <td class="">ID</td>
+            <td class="">标题</td>
+            <td class="" style="width: 85px;">所属相册</td>
+            <td class="" style="width: 150px;">发表时间</td>
+            <td class="">操作</td>
+        </tr>
+        {volist name="list" id="vo"}
+
+        <tr>
+            <td class="">{$vo.aid}</td>
+            <td class="">{$vo.title}</td>
+            <td class="">{$vo.cid|getcatename=###,2}</td>
+            <td class="">{$vo.addtime|date="Y/m/d H:i:s",###}</td>
+            <td class=""><a href="{:url('blog/Pics/edit',['aid'=>$vo.aid])}" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-edit"></i> 编辑</a> <a href="javascript:;" data="{$vo.aid}" class="btn btn-info btn-xs del"><i class="glyphicon glyphicon-trash"></i> 删除</a></td>
+        </tr>
+        {/volist}
+    </table>
+    <nav aria-label="...">
+        {$list->render()}
+    </nav>
+</div>
+<script>
+    //分类删除
+    $(".del").on('click',function(){
+        //this和$(this)的区别
+        //获取栏目ID
+        var aid=$(this).attr("data");
+        //询问框
+        layer.confirm('确定要删除吗？', {
+            btn: ['删除','取消'] //按钮
+        }, function(){
+            $.ajax({
+                type:"post",
+                url:"{:url('blog/Pics/del')}",
+                data:{id:aid},
+                dataType:"json",
+                success:function(res){
+                    if(res.code==1){
+                        layer.msg(res.msg,function(){
+                            location.reload();
+                        });
+                    }else{
+                        layer.msg(res.msg);
+                    }
+                }
+            })
+        }, function(){
+        });
+    })
+</script>

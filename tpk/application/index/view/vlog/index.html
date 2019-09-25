@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="__INDEX__/js/jquery-2.1.4.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="__INDEX__/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="__INDEX__/css/nprogress.css">
+<link rel="stylesheet" type="text/css" href="__INDEX__/css/style.css">
+<link rel="stylesheet" type="text/css" href="__INDEX__/css/font-awesome.min.css">
+<link rel="apple-touch-icon-precomposed" href="images/icon/icon.png">
+<link rel="shortcut icon" href="__INDEX__/images/icon/favicon.ico">
+<script src="__INDEX__/js/jquery-2.1.4.min.js"></script>
+<script src="__INDEX__/js/nprogress.js"></script>
+<script src="__INDEX__/js/jquery.lazyload.min.js"></script>
+	</head>
+	<body>
+ {volist name="newbvlog" id="vo"}
+	 <article class="excerpt excerpt-3"><a class="focus" href="{:url('index/video/show',['id'=>$vo.vid])}" title=""><img class="thumb" data-original="__IMG__{$vo.pic}" src="__INDEX__/images/timg.jpg" alt=""></a>
+      
+          <h2><a href="{:url('index/video/show',['id'=>$vo.vid])}" title="">{$vo.title}</a></h2>
+        </header>
+        <p class="meta">
+          <time class="time"><i class="glyphicon glyphicon-time"></i> {$vo.addtime|date="Y/m/d H:i:s",###}</time>
+        
+   
+      </article>
+      {/volist}
+ <script src="__INDEX__/js/bootstrap.min.js"></script>
+<script src="__INDEX__/js/jquery.ias.js"></script>
+<script src="__INDEX__/js/scripts.js"></script>
+	</body>
+</html>

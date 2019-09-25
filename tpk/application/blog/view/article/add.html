@@ -1,0 +1,154 @@
+{layout name="layout" /}
+<header class="article-header" style="padding-top:0px;padding-bottom: 15px;">
+    <h1 class="article-title">添加博文</h1>
+</header>
+<div class="readers">
+    <form class="form-horizontal" method="post" action="" onsubmit="return checkform();">
+
+        <div class="form-group">
+            <label for="cid" class="col-sm-2 control-label">分类</label>
+            <div class="col-sm-10">
+                <select class="form-control" name="cid" id="cid">
+                    {volist name="catelist" id="vo"}
+                    <option value="{$vo.cid}">{$vo.name}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="title" class="col-sm-2 control-label">标题</label>
+            <div class="col-sm-10">
+                <input type="text" name="title" class="form-control myinput" id="title" placeholder="标题">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="keyword" class="col-sm-2 control-label">关键字</label>
+            <div class="col-sm-10">
+                <input type="text" name="keyword" value="" class="form-control myinput" id="keyword" placeholder="关键字">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="desc" class="col-sm-2 control-label">描述</label>
+            <div class="col-sm-10">
+                <input type="text" name="desc" value="" class="form-control myinput" id="desc" placeholder="描述">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="remark" class="col-sm-2 control-label">摘要</label>
+            <div class="col-sm-10">
+                <input type="text" name="remark" value="" class="form-control myinput" id="remark" placeholder="摘要">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="source" class="col-sm-2 control-label">来源</label>
+            <div class="col-sm-10">
+                <input type="text" name="source" value="原创" class="form-control myinput" id="source" placeholder="来源">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="pic" class="col-sm-2 control-label">栏目图片</label>
+            <div class="col-sm-10">
+                <button type="button" class="layui-btn" id="myupload">
+                    <i class="layui-icon">&#xe67c;</i>上传图片
+                </button>
+                <input type="text" name="pic" value="" class="form-control myinput" id="pic" placeholder="栏目图片">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="container" class="col-sm-2 control-label">详情</label>
+            <div class="col-sm-10">
+                <!--<textarea name="content" id="container" class="form-control" rows="8"></textarea>-->
+                <script id="container" name="content" type="text/plain">
+
+                </script>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="pic" class="col-sm-2 control-label">是否显示</label>
+            <div class="col-sm-10">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="isnominate" name="isnominate" value="1" checked="checked"> 是否推荐
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="istop" class="col-sm-2 control-label">是否置顶</label>
+            <div class="col-sm-10">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="istop" name="istop" value="1"> 是否置顶
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">保存</button>
+            </div>
+        </div>
+        <div id="msg" style="color:red;"></div>
+    </form>
+</div>
+<!-- 配置文件 -->
+<script type="text/javascript" src="__COMMON__/ueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="__COMMON__/ueditor/ueditor.all.js"></script>
+<script>
+    //实例化编辑器
+    var ue = UE.getEditor('container',{
+        autoHeightEnabled: true,
+        //常用配置项
+        initialFrameWidth:null,//自适应宽度
+    });
+    //表单的前端验证
+    function checkform() {
+        var input=document.getElementsByClassName('myinput');
+        var name=input[0].value.trim();
+        if(title=="" || title ==null || title=="undefined"){
+            var msg=document.getElementById("msg");
+            msg.innerHTML="* 标题不能为空！";
+            return false;
+        }else{
+            return true;
+        }
+
+    }
+    //图片上传
+    // layui.use('upload', function(){
+    //     var upload = layui.upload;
+    //     //执行实例
+    //     var uploadInst = upload.render({
+    //         elem: '#myupload' //绑定元素
+    //         ,url: '{:url("blog/Blogcate/upimg")}' //上传接口
+    //         ,field:'upimg'
+    //         ,done: function(res){
+    //             //上传完毕回调
+    //             layer.msg(res.msg,{time:2000},function () {
+    //                 if(res.code==1){
+    //                     $("#pic").val("uploads\\"+res.src);
+    //                 }
+    //             })
+    //         }
+    //         ,error: function(){
+    //             //请求异常回调
+    //         }
+    //     });
+    // });
+    //自动upload组件
+    var upload = layui.upload;
+    //执行实例
+    var uploadInst = upload.render({
+        elem: '#myupload' //绑定元素
+        ,url: '{:url("blog/Article/upimg")}' //上传接口
+        ,field:'upimg'
+        ,done: function(res){
+            //上传完毕回调
+            layer.msg(res.msg,{time:2000},function () {
+                if(res.code==1){
+                    $("#pic").val("uploads\\"+res.src);
+                }
+            })
+        }
+        ,error: function(){
+            //请求异常回调
+        }
+    });
+</script>

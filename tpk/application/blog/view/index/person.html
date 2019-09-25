@@ -1,0 +1,38 @@
+{layout name="layout" /}
+<header class="article-header" style="padding-top:0px;padding-bottom: 15px;">
+    <h1 class="article-title">个人资料</h1>
+</header>
+<div class="readers">
+    <form class="form-horizontal" enctype="multipart/form-data" method="post">
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">头象</label>
+            <div class="col-sm-10">
+                <img src="{if condition='$personal.face eq ""'}__COMMON__/face/face.jpg{else/}__IMG__{$personal.face}{/if}" alt="..." id="uploadfile" class="img-circle" style="border: 1px solid #DDD;padding:5px;cursor: pointer; height:50px;">
+                <input type="file" name="face" id="face" style="display: none;"></input>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="account" class="col-sm-2 control-label">账号</label>
+            <div class="col-sm-10">
+                <input type="text" value="{$personal.account}" class="form-control" disabled id="account" placeholder="账号">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="nick" class="col-sm-2 control-label">昵称</label>
+            <div class="col-sm-10">
+                <input type="text" name="nick" value="{$personal.nick}" class="form-control" id="nick" placeholder="昵称">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="email" class="col-sm-2 control-label">邮箱</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" value="{$personal.email}" disabled id="email" placeholder="邮箱">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">保存</button>
+            </div>
+        </div>
+    </form>
+</div>

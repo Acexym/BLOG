@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>数据库管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="__ADMIN__/css/font.css">
+    <link rel="stylesheet" href="__ADMIN__/css/xadmin.css">
+    <script type="text/javascript" src="__COMMON__/js/jquery.min.js"></script>
+    <script type="text/javascript" src="__ADMIN__/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__ADMIN__/js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">数据库管理</a>
+        <a>
+          <cite>数据表列表</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="repairAll()"><i class="layui-icon"></i>批量修复</button>
+        <button class="layui-btn" onclick="x_admin_show('数据库-备份','{:url("admin/Database/backuplst",["t"=>"database"])}',800,400)"><i class="layui-icon"></i>数据库备份</button>
+        <span class="x-right" style="line-height:40px">共有数据：{$list|count} 条</span>
+      </xblock>
+      <table class="layui-table"  lay-filter="mytable">
+        <thead>
+          <tr>
+            <th lay-data="{type:'checkbox', width:60, fixed: 'left'}">
+
+            </th>
+            <th lay-data="{field:'name', width:200}">表名</th>
+            <th lay-data="{field:'engine'}">引擎</th>
+            <th lay-data="{field:'author', width:150}">大小</th>
+            <th lay-data="{field:'collation', width:150}">字符集</th>
+        <th lay-data="{field:'comment', width:150}">说明</th>
+        <th lay-data="{field:'caozuo', width:200}">操作</th>
+        </thead>
+        <tbody>
+        {volist name="list" id="vo"}
+          <tr>
+            <td></td>
+            <td>{$vo.name}</td>
+            <td>{$vo.engine}</td>
+            <td>{:format_size($vo.data_length+$vo.index_length)}</td>
+            <td>{$vo.collation}</td>
+            <td class="td-status">
+              {$vo.comment}
+            </td>
+            <td class="td-manage">
+              <a href="javascript:;" onclick="repair('{$vo.name}')" class="layui-btn layui-btn-normal layui-btn-xs">修复</a>
+              <a href="javascript:;" onclick="optimize('{$vo.name}')" class="layui-btn layui-btn-danger layui-btn-xs">优化</a>
+              <a href="javascript:;" onclick="x_admin_show('{$vo.name}-备份','{:url("admin/Database/backuplst",["t"=>$vo.name])}',800,400)" class="layui-btn layui-btn-xs">备份</a>
+            </td>
+          </tr>
+        {/volist}
+        </tbody>
+      </table>
+    </div>
+    <script>
+      var table;
+      var repairAll;
+      layui.use('table', function(){
+          table= layui.table;
+          //转换静态表格
+          table.init('mytable', {
+              id:"mytable"
+              ,height: 600 //设置高度
+              ,limit:600
+          });
+          repairAll =function(){
+              var checkStatus = table.checkStatus('mytable')
+                  ,data = checkStatus.data;
+              //获取已选中的表名
+              var tables= new Array();
+              for(var index in data){
+                  tables.push(data[index].name);
+              }
+              tables=tables.join(",");
+              $.post("{:url('admin/Database/repairAll')}",{tables:tables},function(res){
+                layer.msg(res.msg,{time:1000});
+              },'json');
+          }
+      });
+      layui.use('upload', function(){
+          var upload = layui.upload;
+
+          //执行实例
+          var index;
+          var uploadInst = upload.render({
+              elem: '#upfile' //绑定元素
+              ,url: '{:url("admin/Addons/lxinstall")}' //上传接口
+              ,field:'addons'
+              ,exts:'zip'
+              ,before:function(){
+                  index = layer.load();
+              }
+              ,done: function(res){
+                  //上传完毕回调
+                  layer.close(index);
+                  layer.msg(res.msg,{time:1000},function(){
+                      if(res.code==1){
+                          location.reload();
+                      }
+                  });
+              }
+              ,error: function(){
+                  //请求异常回调
+              }
+          });
+      });
+      //修复
+      function repair(tablename){
+        $.post("{:url('admin/Database/repair')}",{tablename:tablename},function(res){
+          layer.msg(res.msg,{time:1000});
+        },'json');
+      }
+      //优化
+      function optimize(tablename){
+          $.post("{:url('admin/Database/optimize')}",{tablename:tablename},function(res){
+              layer.msg(res.msg,{time:1000});
+          },'json');
+      }
+    </script>
+
+  </body>
+
+</html>
